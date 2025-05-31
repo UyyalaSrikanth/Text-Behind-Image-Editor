@@ -1,103 +1,103 @@
-import Image from "next/image";
+'use client';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+const showcaseImages = [
+  { id: 1, src: '/img1.png', alt: 'Image 1' },
+  { id: 2, src: '/img2.png', alt: 'Image 2' },
+  { id: 3, src: '/img3.png', alt: 'Image 3' },
+  { id: 4, src: '/img4.png', alt: 'Image 4' },
+  { id: 5, src: '/img5.png', alt: 'Image 5' },
+  { id: 6, src: '/img6.png', alt: 'Image 6' },
+  { id: 7, src: '/img7.png', alt: 'Image 7' },
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [darkMode, setDarkMode] = useState(true);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  // FIXED: Keep dependency array size consistent
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+  }, [darkMode]);
+
+  return (
+    <main className={`min-h-screen ${darkMode ? 'bg-black text-white' : 'bg-white text-black'} py-10 px-4 transition-colors`}>
+      
+      {/* Toggle Switch */}
+      <div className="flex justify-end mb-4">
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            className="sr-only peer"
+            checked={darkMode}
+            onChange={() => setDarkMode(!darkMode)}
+          />
+          <div className="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:border-white peer-focus:outline-none relative" />
+        </label>
+      </div>
+
+      {/* Hero Section */}
+      <section className="relative py-20 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              Create Stunning Text Behind Image Effects
+            </h1>
+            <p className="text-xl text-gray-400 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+              Transform your photos with our easy-to-use editor. Add text behind your subjects and create eye-catching designs in seconds.
+            </p>
+            <Link
+              href="/editor"
+              className="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              Start Creating Now
+            </Link>
+
+            {/* Caption and Mini Photos */}
+            <p className="mt-6 text-lg text-blue-500 font-semibold">
+              Stop posting Insta stories with boring captions! Upload captions like this.
+            </p>
+
+            <div className="mt-8 flex justify-center gap-8">
+              <div className="flex flex-col items-center">
+                <div className="relative w-24 h-36 rounded-lg overflow-hidden shadow-lg">
+                  <Image src="/before.jpg" alt="Wrong caption" fill className="object-cover" />
+                </div>
+                <span className="mt-2 text-red-500 font-bold text-2xl select-none">❌</span>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="relative w-24 h-36 rounded-lg overflow-hidden shadow-lg">
+                  <Image src="/after.png" alt="Right caption" fill className="object-cover" />
+                </div>
+                <span className="mt-2 text-green-500 font-bold text-2xl select-none">✅</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Showcase Section */}
+      <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
+        {showcaseImages.map((img) => (
+          <div
+            key={img.id}
+            className="relative w-full break-inside-avoid cursor-pointer transition-transform duration-300 hover:scale-105 hover:rotate-1"
           >
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src={img.src}
+              alt={img.alt}
+              width={500}
+              height={600}
+              className="w-full h-auto rounded-lg shadow-lg"
+              priority={img.id === 1}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          </div>
+        ))}
+      </div>
+
+ 
+    </main>
   );
 }
