@@ -76,7 +76,17 @@ export default function ImageUploader({ onImageProcessed }: ImageUploaderProps) 
     },
     maxFiles: 1,
     maxSize: 10 * 1024 * 1024, // 10MB
-    disabled: isProcessing
+    disabled: isProcessing,
+    onDropRejected: (rejectedFiles) => {
+      const file = rejectedFiles[0];
+      if (file.errors[0].code === 'file-too-large') {
+        setError('File size too large. Please select an image under 10MB.');
+      } else if (file.errors[0].code === 'file-invalid-type') {
+        setError('Please upload a valid image file (PNG, JPG, JPEG, or GIF)');
+      } else {
+        setError('Error uploading file. Please try again.');
+      }
+    }
   });
 
   return (

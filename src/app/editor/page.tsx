@@ -1,6 +1,5 @@
 'use client';
 
-import styles from './Editor.module.css';
 import CanvasEditor, { CanvasEditorRef } from '@/components/CanvasEditor';
 import ControlPanel from '@/components/ControlPanel';
 import ImageUploader from '@/components/ImageUploader';
@@ -160,95 +159,97 @@ export default function Editor() {
               <ImageUploader onImageProcessed={handleImageProcessed} />
             </div>
           ) : (
-            <div className="space-y-4">
-              {/* Text Elements List */}
-              <div className="bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700">
-                <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 space-x-0 sm:space-x-2">
-                  <div className="flex items-center space-x-2">
-                    <h3 className="text-lg font-medium bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                      Text Elements
-                    </h3>
-                    <div className="flex space-x-2 flex-wrap justify-center sm:justify-start">
-                      <button
-                        onClick={addNewText}
-                        className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-md"
-                      >
-                        Add Text
-                      </button>
-                      {textElements.length > 0 && (
-                        <button
-                          onClick={deleteSelectedText}
-                          className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm rounded-lg hover:from-red-600 hover:to-red-700 transition-all shadow-md"
-                        >
-                          Delete
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-3 flex space-x-2 overflow-x-auto pb-2">
-                  {textElements.map((element) => (
-                    <button
-                      key={element.id}
-                      onClick={() => setSelectedTextId(element.id)}
-                      className={`px-4 py-2 rounded-lg transition-all whitespace-nowrap shadow-md ${
-                        element.id === selectedTextId
-                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
-                          : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                      }`}
-                    >
-                      {element.text}
-                    </button>
-                  ))}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Left Column - Canvas */}
+              <div className="lg:col-span-2 space-y-4">
+                <div 
+                  ref={canvasContainerRef}
+                  className="bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700 flex justify-center items-center"
+                >
+                  <CanvasEditor
+                    ref={canvasEditorRef}
+                    imageUrl={imageUrl}
+                    originalImageUrl={originalImageUrl!}
+                    textElements={textElements}
+                    canvasWidth={canvasWidth}
+                    canvasHeight={canvasHeight}
+                    selectedTextId={selectedTextId}
+                    onTextSelect={setSelectedTextId}
+                    onTextUpdate={updateTextElement}
+                    imageRotation={imageRotation}
+                  />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left side - Canvas */}
-                <div ref={canvasContainerRef} className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 overflow-hidden">
-                  <div className="relative">
-                    <CanvasEditor
-                      ref={canvasEditorRef}
-                      imageUrl={imageUrl}
-                      originalImageUrl={originalImageUrl!}
-                      textElements={textElements}
-                      canvasWidth={canvasWidth}
-                      canvasHeight={canvasHeight}
-                      selectedTextId={selectedTextId}
-                      onTextSelect={setSelectedTextId}
-                      onTextUpdate={updateTextElement}
-                      imageRotation={imageRotation}
-                    />
+              {/* Right Column - Controls */}
+              <div className="lg:col-span-1 space-y-4">
+                {/* Text Elements List */}
+                <div className="bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700">
+                  <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 space-x-0 sm:space-x-2">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-lg font-medium bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        Text Elements
+                      </h3>
+                      <div className="flex space-x-2 flex-wrap justify-center sm:justify-start">
+                        <button
+                          onClick={addNewText}
+                          className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-md"
+                        >
+                          Add Text
+                        </button>
+                        {textElements.length > 0 && (
+                          <button
+                            onClick={deleteSelectedText}
+                            className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm rounded-lg hover:from-red-600 hover:to-red-700 transition-all shadow-md"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex space-x-2 overflow-x-auto pb-2">
+                    {textElements.map((element) => (
+                      <button
+                        key={element.id}
+                        onClick={() => setSelectedTextId(element.id)}
+                        className={`px-4 py-2 rounded-lg transition-all whitespace-nowrap shadow-md ${
+                          element.id === selectedTextId
+                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        }`}
+                      >
+                        {element.text}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                {/* Right side - Controls */}
+                {/* Control Panel */}
                 {selectedText && (
-                  <div>
-                    <ControlPanel
-                      text={selectedText.text}
-                      fontFamily={selectedText.fontFamily}
-                      textColor={selectedText.textColor}
-                      xPosition={selectedText.xPosition}
-                      yPosition={selectedText.yPosition}
-                      canvasWidth={canvasWidth}
-                      canvasHeight={canvasHeight}
-                      fontSize={selectedText.fontSize}
-                      isBold={selectedText.isBold}
-                      rotation={selectedText.rotation}
-                      onTextChange={(text) => updateTextElement({ text })}
-                      onFontFamilyChange={(fontFamily) => updateTextElement({ fontFamily })}
-                      onTextColorChange={(textColor) => updateTextElement({ textColor })}
-                      onXPositionChange={(xPosition) => updateTextElement({ xPosition })}
-                      onYPositionChange={(yPosition) => updateTextElement({ yPosition })}
-                      onFontSizeChange={(fontSize) => updateTextElement({ fontSize })}
-                      onBoldChange={(isBold) => updateTextElement({ isBold })}
-                      onRotationChange={(rotation) => updateTextElement({ rotation })}
-                      onDownload={handleDownload}
-                      imageRotation={imageRotation}
-                      onImageRotationChange={handleImageRotationChange}
-                    />
-                  </div>
+                  <ControlPanel
+                    text={selectedText.text}
+                    fontFamily={selectedText.fontFamily}
+                    textColor={selectedText.textColor}
+                    xPosition={selectedText.xPosition}
+                    yPosition={selectedText.yPosition}
+                    canvasWidth={canvasWidth}
+                    canvasHeight={canvasHeight}
+                    fontSize={selectedText.fontSize}
+                    isBold={selectedText.isBold}
+                    rotation={selectedText.rotation}
+                    onTextChange={(text) => updateTextElement({ text })}
+                    onFontFamilyChange={(fontFamily) => updateTextElement({ fontFamily })}
+                    onTextColorChange={(textColor) => updateTextElement({ textColor })}
+                    onXPositionChange={(xPosition) => updateTextElement({ xPosition })}
+                    onYPositionChange={(yPosition) => updateTextElement({ yPosition })}
+                    onFontSizeChange={(fontSize) => updateTextElement({ fontSize })}
+                    onBoldChange={(isBold) => updateTextElement({ isBold })}
+                    onRotationChange={(rotation) => updateTextElement({ rotation })}
+                    onDownload={handleDownload}
+                    imageRotation={imageRotation}
+                    onImageRotationChange={handleImageRotationChange}
+                  />
                 )}
               </div>
             </div>
