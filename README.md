@@ -1,19 +1,32 @@
 # Text Behind Image Editor
 
-A modern web application that allows users to create images with text placed behind the subject. Built with Next.js, TypeScript, and Tailwind CSS.
+A modern web application that allows users to create stunning text effects behind images. Perfect for social media posts, stories, and creative content.
 
-## Features
+## 🌟 Features
 
-- Upload and process images with automatic background removal
-- Live preview of text placement behind the subject
-- Customize text properties:
-  - Text content
-  - Font family
-  - Text color
-  - X/Y position
-- Download the final image as PNG
+- **Text Behind Image Effect**: Create professional-looking text effects that appear behind the main subject of your images
+- **Real-time Preview**: See your changes instantly as you edit
+- **Multiple Text Elements**: Add and manage multiple text elements with different styles
+- **Advanced Text Controls**:
+  - Font family selection
+  - Text color with color picker
+  - Font size adjustment
+  - Text positioning (X and Y coordinates)
+  - Text rotation
+  - Bold text option
+- **Image Controls**:
+  - Image rotation
+  - Automatic aspect ratio maintenance
+  - High-quality image processing
+- **Responsive Design**: Works seamlessly on all devices
+- **Dark/Light Mode**: Toggle between dark and light themes
+- **Optimized Performance**:
+  - Lazy loading for images
+  - Efficient image caching
+  - Smooth scrolling experience
+  - Loading indicators for better UX
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -23,42 +36,78 @@ A modern web application that allows users to create images with text placed beh
 ### Installation
 
 1. Clone the repository:
-```bash
-git clone <repository-url>
-cd text-image-editor
-```
+   ```bash
+   git clone https://github.com/UyyalaSrikanth/Text-Behind-Image-Editor.git
+   ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+2. Navigate to the project directory:
+   ```bash
+   cd text-image-editor
+   ```
 
-3. Start the development server:
-```bash
-npm run dev
-```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-## Usage
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-1. Click the "Upload Image" button to select an image
-2. Wait for the background removal process to complete
-3. Use the control panel on the right to:
-   - Edit the text content
-   - Choose a font family
-   - Pick a text color
-   - Adjust text position using X/Y sliders
-4. Click "Download Image" to save your creation
+## 🛠️ Built With
 
-## Tech Stack
+- [Next.js](https://nextjs.org/) - React framework
+- [React](https://reactjs.org/) - UI library
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Konva](https://konvajs.org/) - Canvas manipulation
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
 
-- Next.js 14
-- TypeScript
-- Tailwind CSS
-- @imgly/background-removal
-- HTML5 Canvas API
+## 📝 Usage
 
-## License
+1. **Upload an Image**:
+   - Click the upload area or drag and drop an image
+   - The image will be processed to remove the background
 
-MIT
+2. **Add Text**:
+   - Click "Add Text" to create a new text element
+   - Use the control panel to customize the text
+
+3. **Customize Text**:
+   - Change font family
+   - Adjust text color
+   - Modify font size
+   - Position the text
+   - Rotate text
+   - Toggle bold style
+
+4. **Download**:
+   - Click the "Download" button to save your creation
+
+## 🔧 Performance Optimizations
+
+- Lazy loading for images below the fold
+- Efficient image caching
+- Optimized image quality settings
+- Memoized components to prevent unnecessary re-renders
+- Responsive image loading with proper sizing
+- Loading indicators for better user experience
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+- **Srikanth Uyyala** - [GitHub](https://github.com/UyyalaSrikanth)
+
+## 🙏 Acknowledgments
+
+- Thanks to all contributors who have helped improve this project
+- Special thanks to the Next.js and React communities for their excellent documentation and support
