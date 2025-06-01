@@ -523,7 +523,9 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
     <div className="relative">
       <canvas
         ref={canvasRef}
-        className="border border-gray-300 rounded-lg"
+        width={canvasWidth}
+        height={canvasHeight}
+        className="border border-gray-700 rounded-lg"
         onMouseDown={handleMouseDown}
    
       />

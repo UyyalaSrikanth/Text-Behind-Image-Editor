@@ -125,6 +125,14 @@ export default function Editor() {
     });
   };
 
+  const handleCanvasWidthChange = (width: number) => {
+    setCanvasWidth(width);
+  };
+
+  const handleCanvasHeightChange = (height: number) => {
+    setCanvasHeight(height);
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100">
       <div className="p-4 md:p-8">
@@ -249,6 +257,8 @@ export default function Editor() {
                     onDownload={handleDownload}
                     imageRotation={imageRotation}
                     onImageRotationChange={handleImageRotationChange}
+                    onCanvasWidthChange={handleCanvasWidthChange}
+                    onCanvasHeightChange={handleCanvasHeightChange}
                   />
                 )}
               </div>
