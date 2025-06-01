@@ -4,7 +4,7 @@ import { FONT_OPTIONS } from '@/constants/fonts';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { SketchPicker } from 'react-color';
 
-interface ControlPanelProps {
+export interface ControlPanelProps {
   text: string;
   fontFamily: string;
   textColor: string;
