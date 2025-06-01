@@ -110,26 +110,53 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
       ctx.save();
       
       // Set text properties
-      // Scale font size based on the ratio of the element.fontSize (0-300) to a reference value (e.g., 100 or 200) relative to the image draw height
-      // Let's assume element.fontSize 100 corresponds to a reasonable base size relative to the image height
-      const baseFontSizeReference = 100; // A reference value for element.fontSize
-      const scaledFontSize = (element.fontSize / baseFontSizeReference) * drawHeight * 0.2; // Adjusted scaling factor (0.2 is a guess, might need tweaking)
+      const baseFontSizeReference = 100;
+      const scaledFontSize = (element.fontSize / baseFontSizeReference) * drawHeight * 0.2;
 
-      ctx.font = `${element.isBold ? 'bold' : 'normal'} ${scaledFontSize}px ${element.fontFamily}, sans-serif`;
-      ctx.fillStyle = element.textColor;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      // Calculate text position (percentages relative to image draw area)
-      const x = offsetX + (element.xPosition / 100) * drawWidth;
-      const y = offsetY + (element.yPosition / 100) * drawHeight;
-
-      // Apply text rotation
-      ctx.translate(x, y);
-      ctx.rotate((element.rotation * Math.PI) / 180);
+      // Convert font name to class name format
+      const fontClass = element.fontFamily.toLowerCase().replace(/\s+/g, '-');
       
-      // Draw text
-      ctx.fillText(element.text, 0, 0);
+      // Ensure font is loaded before applying
+      const fontString = `${element.isBold ? 'bold' : 'normal'} ${scaledFontSize}px "${element.fontFamily}", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`;
+      
+      // Wait for font to load and ensure it's ready
+      const loadFont = async () => {
+        try {
+          await document.fonts.ready;
+          // Add the font class to ensure it's loaded
+          const fontElement = document.createElement('div');
+          fontElement.className = `font-${fontClass} force-font-load`;
+          fontElement.textContent = 'Font Loader';
+          document.body.appendChild(fontElement);
+          
+          // Wait a bit to ensure the font is loaded
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          document.body.removeChild(fontElement);
+        } catch (error) {
+          console.warn(`Font ${element.fontFamily} failed to load:`, error);
+        }
+      };
+
+      loadFont().then(() => {
+        ctx.font = fontString;
+        ctx.fillStyle = element.textColor;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Calculate text position (percentages relative to image draw area)
+        const x = offsetX + (element.xPosition / 100) * drawWidth;
+        const y = offsetY + (element.yPosition / 100) * drawHeight;
+
+        // Apply text rotation
+        ctx.translate(x, y);
+        ctx.rotate((element.rotation * Math.PI) / 180);
+        
+        // Draw text with improved rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.fillText(element.text, 0, 0);
+      });
 
       // Draw selection indicator if selected
       if (isSelected) {
@@ -266,13 +293,11 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
         ctx.translate(finalX, finalY);
         ctx.rotate(element.rotation * Math.PI / 180);
 
-        // Scale font size using the same logic as the editor canvas drawing
-        const baseFontSizeReference = 100; // Must match the value used in drawCanvas
-        const scaledFontSize = (element.fontSize / baseFontSizeReference) * drawHeight * 0.2; // Must use the same scaling factor
+        const baseFontSizeReference = 100;
+        const scaledFontSize = (element.fontSize / baseFontSizeReference) * drawHeight * 0.2;
 
-        const font = `${element.isBold ? 'bold ' : ''}${scaledFontSize}px ${element.fontFamily}, sans-serif`;
-        ctx.font = font;
-
+        const fontString = `${element.isBold ? 'bold' : 'normal'} ${scaledFontSize}px "${element.fontFamily}", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`;
+        ctx.font = fontString;
         ctx.fillStyle = element.textColor;
 
         ctx.textAlign = 'center';

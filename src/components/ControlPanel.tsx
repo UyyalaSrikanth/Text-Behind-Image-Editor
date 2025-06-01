@@ -1,7 +1,7 @@
 'use client';
 
-import { SketchPicker } from 'react-color';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { SketchPicker } from 'react-color';
 
 interface ControlPanelProps {
   text: string;
@@ -28,38 +28,39 @@ interface ControlPanelProps {
 }
 
 const FONT_OPTIONS = [
+  // Basic Fonts
   { name: 'Impact', value: 'Impact' },
-  { name: 'Anton', value: 'Anton' },
-  { name: 'Bebas Neue', value: 'Bebas Neue' },
-  { name: 'Oswald', value: 'Oswald' },
-  { name: 'Playfair Display', value: 'Playfair Display' },
+  { name: 'Arial', value: 'Arial' },
+  { name: 'Helvetica', value: 'Helvetica' },
+  { name: 'Times New Roman', value: 'Times New Roman' },
+  { name: 'Georgia', value: 'Georgia' },
+  { name: 'Courier New', value: 'Courier New' },
+  { name: 'Verdana', value: 'Verdana' },
+  { name: 'Tahoma', value: 'Tahoma' },
+  { name: 'Trebuchet MS', value: 'Trebuchet MS' },
+  { name: 'Arial Black', value: 'Arial Black' },
+  
+  // Google Fonts - Most Reliable
   { name: 'Roboto', value: 'Roboto' },
+  { name: 'Open Sans', value: 'Open Sans' },
+  { name: 'Lato', value: 'Lato' },
   { name: 'Montserrat', value: 'Montserrat' },
   { name: 'Poppins', value: 'Poppins' },
   { name: 'Raleway', value: 'Raleway' },
   { name: 'Ubuntu', value: 'Ubuntu' },
-
-  // Sans-serif / serif additions
-  { name: 'Lato', value: 'Lato' },
+  { name: 'Playfair Display', value: 'Playfair Display' },
   { name: 'Merriweather', value: 'Merriweather' },
-  { name: 'Nunito', value: 'Nunito' },
-  { name: 'Open Sans', value: 'Open Sans' },
   { name: 'Source Sans Pro', value: 'Source Sans Pro' },
-  { name: 'Courier New', value: 'Courier New' },
-  { name: 'Georgia', value: 'Georgia' },
-  { name: 'Times New Roman', value: 'Times New Roman' },
-
-  // Cursive & Fancy fonts
+  
+  // Cursive & Decorative - Most Reliable
   { name: 'Dancing Script', value: 'Dancing Script' },
   { name: 'Pacifico', value: 'Pacifico' },
-  { name: 'Great Vibes', value: 'Great Vibes' },
-  { name: 'Brush Script MT', value: 'Brush Script MT' },
-  { name: 'Satisfy', value: 'Satisfy' },
   { name: 'Lobster', value: 'Lobster' },
-  { name: 'Alex Brush', value: 'Alex Brush' },
-  { name: 'Sacramento', value: 'Sacramento' },
-  { name: 'Allura', value: 'Allura' },
-  { name: 'Kaushan Script', value: 'Kaushan Script' },
+  { name: 'Satisfy', value: 'Satisfy' },
+  { name: 'Great Vibes', value: 'Great Vibes' },
+  { name: 'Shadows Into Light', value: 'Shadows Into Light' },
+  { name: 'Tangerine', value: 'Tangerine' },
+  { name: 'Yellowtail', value: 'Yellowtail' }
 ];
 
 
@@ -153,6 +154,24 @@ export default function ControlPanel({
   const debouncedOnRotationChange = useCallback(debounce(onRotationChange, 50), [onRotationChange]);
   const debouncedOnImageRotationChange = useCallback(debounce(onImageRotationChange, 50), [onImageRotationChange]);
 
+  useEffect(() => {
+    // Force load all fonts
+    const fontLoader = document.createElement('div');
+    fontLoader.className = 'force-font-load';
+    FONT_OPTIONS.forEach(font => {
+      const span = document.createElement('span');
+      span.style.fontFamily = `"${font.value}", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`;
+      span.textContent = 'Font Loader';
+      fontLoader.appendChild(span);
+    });
+    document.body.appendChild(fontLoader);
+
+    // Cleanup
+    return () => {
+      document.body.removeChild(fontLoader);
+    };
+  }, []);
+
   return (
     <div className="bg-gray-900 p-4 sm:p-6 rounded-xl shadow-2xl border border-gray-700 space-y-4 backdrop-blur-sm bg-opacity-80">
       <button 
@@ -224,16 +243,24 @@ export default function ControlPanel({
                 onChange={(e) => onFontFamilyChange(e.target.value)}
                 className="w-full px-2 py-1.5 text-xs sm:text-sm bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               >
-                {FONT_OPTIONS.map((font) => (
-                  <option
-                    key={font.value}
-                    value={font.value}
-                    style={{ fontFamily: font.value }}
-                    className="bg-gray-800"
-                  >
-                    {font.name}
-                  </option>
-                ))}
+                {FONT_OPTIONS.map((font) => {
+                  // Convert font name to class name format
+                  const fontClass = font.value.toLowerCase().replace(/\s+/g, '-');
+                  return (
+                    <option
+                      key={font.value}
+                      value={font.value}
+                      className={`bg-gray-800 font-${fontClass}`}
+                      style={{ 
+                        fontFamily: `"${font.value}", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`,
+                        WebkitFontSmoothing: 'antialiased',
+                        MozOsxFontSmoothing: 'grayscale'
+                      }}
+                    >
+                      {font.name}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 

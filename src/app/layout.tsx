@@ -1,8 +1,27 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Dancing_Script, Great_Vibes, Inter, Lato, Lobster, Merriweather, Montserrat, Open_Sans, Pacifico, Playfair_Display, Poppins, Raleway, Roboto, Satisfy, Shadows_Into_Light, Source_Sans_3, Tangerine, Ubuntu, Yellowtail } from "next/font/google";
 import "./globals.css";
 
+// Initialize fonts with proper configuration
 const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const openSans = Open_Sans({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const lato = Lato({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const montserrat = Montserrat({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const poppins = Poppins({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const raleway = Raleway({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const ubuntu = Ubuntu({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const playfair = Playfair_Display({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const merriweather = Merriweather({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const sourceSans = Source_Sans_3({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const dancingScript = Dancing_Script({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const pacifico = Pacifico({ weight: ['400'], subsets: ['latin'], display: 'swap' });
+const greatVibes = Great_Vibes({ weight: ['400'], subsets: ['latin'], display: 'swap' });
+const satisfy = Satisfy({ weight: ['400'], subsets: ['latin'], display: 'swap' });
+const lobster = Lobster({ weight: ['400'], subsets: ['latin'], display: 'swap' });
+const shadowsIntoLight = Shadows_Into_Light({ weight: ['400'], subsets: ['latin'], display: 'swap' });
+const tangerine = Tangerine({ weight: ['400', '700'], subsets: ['latin'], display: 'swap' });
+const yellowtail = Yellowtail({ weight: ['400'], subsets: ['latin'], display: 'swap' });
 
 export const metadata: Metadata = {
   title: "Text Behind Image Editor - 100% Free | No Login Required",
@@ -17,12 +36,98 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Impact&family=Anton&family=Bebas+Neue&family=Oswald:wght@400;700&family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&family=Raleway:wght@400;700&family=Ubuntu:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <style jsx global>{`
+          /* System fonts */
+          @font-face {
+            font-family: 'Impact';
+            src: local('Impact');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Arial';
+            src: local('Arial');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Helvetica';
+            src: local('Helvetica');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Times New Roman';
+            src: local('Times New Roman');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Georgia';
+            src: local('Georgia');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Courier New';
+            src: local('Courier New');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Verdana';
+            src: local('Verdana');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Tahoma';
+            src: local('Tahoma');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Trebuchet MS';
+            src: local('Trebuchet MS');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Arial Black';
+            src: local('Arial Black');
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Brush Script MT';
+            src: local('Brush Script MT');
+            font-display: swap;
+          }
+
+          /* Font loading classes */
+          .font-loading {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+          }
+
+          /* Force font loading */
+          .force-font-load {
+            position: absolute;
+            visibility: hidden;
+            height: 0;
+            width: 0;
+            overflow: hidden;
+          }
+
+          /* Apply Next.js font classes */
+          .font-roboto { font-family: ${roboto.style.fontFamily}; }
+          .font-open-sans { font-family: ${openSans.style.fontFamily}; }
+          .font-lato { font-family: ${lato.style.fontFamily}; }
+          .font-montserrat { font-family: ${montserrat.style.fontFamily}; }
+          .font-poppins { font-family: ${poppins.style.fontFamily}; }
+          .font-raleway { font-family: ${raleway.style.fontFamily}; }
+          .font-ubuntu { font-family: ${ubuntu.style.fontFamily}; }
+          .font-playfair { font-family: ${playfair.style.fontFamily}; }
+          .font-merriweather { font-family: ${merriweather.style.fontFamily}; }
+          .font-source-sans { font-family: ${sourceSans.style.fontFamily}; }
+          .font-dancing-script { font-family: ${dancingScript.style.fontFamily}; }
+          .font-pacifico { font-family: ${pacifico.style.fontFamily}; }
+          .font-great-vibes { font-family: ${greatVibes.style.fontFamily}; }
+          .font-satisfy { font-family: ${satisfy.style.fontFamily}; }
+          .font-lobster { font-family: ${lobster.style.fontFamily}; }
+          .font-shadows-into-light { font-family: ${shadowsIntoLight.style.fontFamily}; }
+          .font-tangerine { font-family: ${tangerine.style.fontFamily}; }
+          .font-yellowtail { font-family: ${yellowtail.style.fontFamily}; }
+        `}</style>
       </head>
       <body className={`${inter.className} bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 text-white antialiased`}>
         {/* Animated gradient background */}
