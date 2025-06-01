@@ -125,14 +125,6 @@ export default function Editor() {
     });
   };
 
-  const handleCanvasWidthChange = (width: number) => {
-    setCanvasWidth(width);
-  };
-
-  const handleCanvasHeightChange = (height: number) => {
-    setCanvasHeight(height);
-  };
-
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100">
       <div className="p-4 md:p-8">
@@ -191,75 +183,73 @@ export default function Editor() {
 
               {/* Right Column - Controls */}
               <div className="lg:col-span-1 space-y-4">
-                {/* Text Elements List */}
-                <div className="bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700">
-                  <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 space-x-0 sm:space-x-2">
-                    <div className="flex items-center space-x-2">
-                      <h3 className="text-lg font-medium bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                        Text Elements
-                      </h3>
-                      <div className="flex space-x-2 flex-wrap justify-center sm:justify-start">
+              {/* Text Elements List */}
+              <div className="bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700">
+                <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 space-x-0 sm:space-x-2">
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-lg font-medium bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                      Text Elements
+                    </h3>
+                    <div className="flex space-x-2 flex-wrap justify-center sm:justify-start">
+                      <button
+                        onClick={addNewText}
+                        className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-md"
+                      >
+                        Add Text
+                      </button>
+                      {textElements.length > 0 && (
                         <button
-                          onClick={addNewText}
-                          className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-md"
+                          onClick={deleteSelectedText}
+                          className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm rounded-lg hover:from-red-600 hover:to-red-700 transition-all shadow-md"
                         >
-                          Add Text
+                          Delete
                         </button>
-                        {textElements.length > 0 && (
-                          <button
-                            onClick={deleteSelectedText}
-                            className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm rounded-lg hover:from-red-600 hover:to-red-700 transition-all shadow-md"
-                          >
-                            Delete
-                          </button>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
-                  <div className="mt-3 flex space-x-2 overflow-x-auto pb-2">
-                    {textElements.map((element) => (
-                      <button
-                        key={element.id}
-                        onClick={() => setSelectedTextId(element.id)}
-                        className={`px-4 py-2 rounded-lg transition-all whitespace-nowrap shadow-md ${
-                          element.id === selectedTextId
-                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
-                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                        }`}
-                      >
-                        {element.text}
-                      </button>
-                    ))}
-                  </div>
                 </div>
+                <div className="mt-3 flex space-x-2 overflow-x-auto pb-2">
+                  {textElements.map((element) => (
+                    <button
+                      key={element.id}
+                      onClick={() => setSelectedTextId(element.id)}
+                      className={`px-4 py-2 rounded-lg transition-all whitespace-nowrap shadow-md ${
+                        element.id === selectedTextId
+                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+                          : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                      }`}
+                    >
+                      {element.text}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
                 {/* Control Panel */}
                 {selectedText && (
-                  <ControlPanel
-                    text={selectedText.text}
-                    fontFamily={selectedText.fontFamily}
-                    textColor={selectedText.textColor}
-                    xPosition={selectedText.xPosition}
-                    yPosition={selectedText.yPosition}
-                    canvasWidth={canvasWidth}
-                    canvasHeight={canvasHeight}
-                    fontSize={selectedText.fontSize}
-                    isBold={selectedText.isBold}
-                    rotation={selectedText.rotation}
-                    onTextChange={(text) => updateTextElement({ text })}
-                    onFontFamilyChange={(fontFamily) => updateTextElement({ fontFamily })}
-                    onTextColorChange={(textColor) => updateTextElement({ textColor })}
-                    onXPositionChange={(xPosition) => updateTextElement({ xPosition })}
-                    onYPositionChange={(yPosition) => updateTextElement({ yPosition })}
-                    onFontSizeChange={(fontSize) => updateTextElement({ fontSize })}
-                    onBoldChange={(isBold) => updateTextElement({ isBold })}
-                    onRotationChange={(rotation) => updateTextElement({ rotation })}
-                    onDownload={handleDownload}
-                    imageRotation={imageRotation}
-                    onImageRotationChange={handleImageRotationChange}
-                    onCanvasWidthChange={handleCanvasWidthChange}
-                    onCanvasHeightChange={handleCanvasHeightChange}
-                  />
+                    <ControlPanel
+                      text={selectedText.text}
+                      fontFamily={selectedText.fontFamily}
+                      textColor={selectedText.textColor}
+                      xPosition={selectedText.xPosition}
+                      yPosition={selectedText.yPosition}
+                      canvasWidth={canvasWidth}
+                      canvasHeight={canvasHeight}
+                      fontSize={selectedText.fontSize}
+                      isBold={selectedText.isBold}
+                      rotation={selectedText.rotation}
+                      onTextChange={(text) => updateTextElement({ text })}
+                      onFontFamilyChange={(fontFamily) => updateTextElement({ fontFamily })}
+                      onTextColorChange={(textColor) => updateTextElement({ textColor })}
+                      onXPositionChange={(xPosition) => updateTextElement({ xPosition })}
+                      onYPositionChange={(yPosition) => updateTextElement({ yPosition })}
+                      onFontSizeChange={(fontSize) => updateTextElement({ fontSize })}
+                      onBoldChange={(isBold) => updateTextElement({ isBold })}
+                      onRotationChange={(rotation) => updateTextElement({ rotation })}
+                      onDownload={handleDownload}
+                      imageRotation={imageRotation}
+                      onImageRotationChange={handleImageRotationChange}
+                    />
                 )}
               </div>
             </div>
