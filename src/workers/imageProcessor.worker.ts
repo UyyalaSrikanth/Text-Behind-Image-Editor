@@ -1,11 +1,12 @@
 /// <reference lib="webworker" />
 
-declare const self: Worker;
+// @ts-ignore
+const ctx: Worker = self;
 
 import { removeBackground } from '@imgly/background-removal';
 
 // Handle messages from the main thread
-self.onmessage = async (e) => {
+ctx.onmessage = async (e) => {
   if (e.data.type === 'PROCESS_IMAGE') {
     try {
       const { image, originalImage } = e.data;
@@ -19,27 +20,27 @@ self.onmessage = async (e) => {
         progress: (key, current, total) => {
           if (key === 'compute:inference') {
             // Send progress updates back to main thread
-            self.postMessage({
+            ctx.postMessage({
               type: 'PROGRESS_UPDATE',
               progress: Math.round((current / total) * 100)
             });
           }
         },
-        // Optimize for mobile devices
-        model: 'medium', // Use medium model for better performance
+        // Use isnet model for better performance
+        model: 'isnet', // Default model that provides good balance of speed and quality
         output: {
-          format: 'image/jpeg',
-          quality: 0.8
+          format: 'image/png', // Use PNG to preserve transparency
+          quality: 1.0 // Use maximum quality for better results
         }
       });
 
-      // Convert processed blob to base64 with compression
+      // Convert processed blob to base64
       const reader = new FileReader();
       reader.readAsDataURL(processedBlob);
       
       reader.onload = () => {
         // Send both processed and original images back to main thread
-        self.postMessage({
+        ctx.postMessage({
           type: 'PROCESS_COMPLETE',
           processedImage: reader.result,
           originalImage: originalImage
@@ -47,7 +48,7 @@ self.onmessage = async (e) => {
       };
     } catch (error) {
       // Send error back to main thread
-      self.postMessage({
+      ctx.postMessage({
         type: 'PROCESS_ERROR',
         error: error instanceof Error ? error.message : 'Unknown error occurred'
       });
