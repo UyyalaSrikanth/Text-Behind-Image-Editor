@@ -1,6 +1,7 @@
 import { ALL_FONTS } from "@/constants/fonts";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,7 +32,7 @@ export default function RootLayout({
           media="all"
         />
       </head>
-      <body className={`${inter.className} bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 text-white antialiased`}>
+      <body className={`${inter.className} bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 text-white antialiased flex flex-col min-h-screen`}>
         {/* Animated gradient background */}
         <div className="fixed inset-0 -z-50 overflow-hidden animate-gradient">
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10"></div>
@@ -63,14 +64,8 @@ export default function RootLayout({
           </div>
         </div>
 
-        {/* Main content with glowing text effect */}
-        <div className="relative min-h-screen flex flex-col">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-purple-600/20 blur-3xl animate-float1"></div>
-            <div className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full bg-blue-600/20 blur-3xl animate-float2"></div>
-            <div className="absolute bottom-1/4 left-1/3 w-80 h-80 rounded-full bg-pink-600/20 blur-3xl animate-float3"></div>
-          </div>
-          
+        {/* Main content area - will flex grow */}
+        <div className="relative flex-grow">
           {children}
         </div>
 
@@ -99,18 +94,53 @@ export default function RootLayout({
           </div>
         </div>
 
-        <footer className="text-center text-gray-500 py-6 border-t border-gray-700">
-  © 2025 All rights reserved.{' '}
-  <a
-    href="https://uyyalasrikanth.netlify.app/"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-blue-500 hover:underline"
-  >
-    @uyyalasrikanth
-  </a>
-</footer>
+        {/* Footer with navigation */}
+        <footer className="bg-black/40 backdrop-blur-sm border-t border-white/10 mt-auto">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              {/* Copyright */}
+              <div className="text-gray-400 text-sm">
+                © 2025 All rights reserved.{' '}
+                <a
+                  href="https://uyyalasrikanth.netlify.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  @uyyalasrikanth
+                </a>
+              </div>
 
+              {/* Navigation Links */}
+              <div className="flex flex-wrap justify-center gap-4 text-sm">
+                <Link 
+                  href="/about" 
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  About
+                </Link>
+                <Link 
+                  href="/contact" 
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Contact
+                </Link>
+                <Link 
+                  href="/privacy" 
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Privacy
+                </Link>
+                <Link 
+                  href="/terms" 
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Terms
+                </Link>
+              </div>
+            </div>
+          </div>
+        </footer>
       </body>
     </html>
   );

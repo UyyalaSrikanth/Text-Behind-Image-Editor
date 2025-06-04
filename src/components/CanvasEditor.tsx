@@ -24,6 +24,7 @@ interface CanvasEditorProps {
   onTextSelect: (id: string | null) => void;
   onTextUpdate: (updates: Partial<TextElement>) => void;
   imageRotation: number; // Degrees
+  availableFonts: string[];
 }
 
 export interface CanvasEditorRef {
@@ -40,6 +41,7 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
   onTextSelect,
   onTextUpdate,
   imageRotation,
+  availableFonts,
 }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(null);

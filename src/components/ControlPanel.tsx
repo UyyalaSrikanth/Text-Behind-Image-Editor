@@ -1,7 +1,7 @@
 'use client';
 
 import { FONT_OPTIONS } from '@/constants/fonts';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { SketchPicker } from 'react-color';
 
 export interface ControlPanelProps {
@@ -26,6 +26,9 @@ export interface ControlPanelProps {
   onDownload: () => void;
   imageRotation: number;
   onImageRotationChange: (rotation: number) => void;
+  mainRef: RefObject<HTMLElement | null>;
+  availableFonts: string[];
+  disabled?: boolean;
 }
 
 function debounce<T extends (...args: any[]) => void>(func: T, wait: number): T {
@@ -63,6 +66,9 @@ export default function ControlPanel({
   onDownload,
   imageRotation,
   onImageRotationChange,
+  mainRef,
+  availableFonts,
+  disabled
 }: ControlPanelProps) {
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef({ x: 0, y: 0, size: 0 });
@@ -121,23 +127,43 @@ export default function ControlPanel({
   useEffect(() => {
     // Force load all fonts
     const fontLoader = document.createElement('div');
-    fontLoader.style.position = 'absolute';
-    fontLoader.style.visibility = 'hidden';
-    fontLoader.style.pointerEvents = 'none';
+    // No need to set display/visibility/position/size/overflow if not appended to DOM
+    // fontLoader.style.position = 'absolute';
+    // fontLoader.style.visibility = 'hidden';
+    // fontLoader.style.pointerEvents = 'none';
+    // fontLoader.style.display = 'none'; // Ensure it doesn't take up space
+    // fontLoader.style.width = '0';
+    // fontLoader.style.height = '0';
+    // fontLoader.style.overflow = 'hidden';
     
+    const fontSpans: HTMLSpanElement[] = [];
+
     FONT_OPTIONS.forEach(font => {
       const span = document.createElement('span');
       span.style.fontFamily = `"${font.value}", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`;
       span.textContent = 'Font Loader';
-      fontLoader.appendChild(span);
+      // We don't append spans to fontLoader either, just setting style is enough
+      // fontLoader.appendChild(span);
+      fontSpans.push(span);
     });
     
-    document.body.appendChild(fontLoader);
+    // We no longer append fontLoader to the DOM
+    // if (mainRef.current) {
+    //   mainRef.current.appendChild(fontLoader);
+    // } else {
+    //   document.body.appendChild(fontLoader);
+    // }
 
+    // To still potentially trigger font loading in some environments without appending:
+    // We could potentially add styles to a temporary stylesheet, but simply creating and styling elements is often sufficient.
+    // For now, let's rely on the browser's ability to detect fonts from styled but un-appended elements.
+    
     return () => {
-      document.body.removeChild(fontLoader);
+      // No elements were added to the DOM, so nothing to remove.
+      // Clean up references if necessary, though not strictly needed for un-appended elements.
+      fontSpans.forEach(span => span = null as any);
     };
-  }, []);
+  }, []); // Removed mainRef from dependencies as it's no longer used for appending
 
   const toggleCategory = (category: string) => {
     setExpandedCategory(expandedCategory === category ? null : category);
