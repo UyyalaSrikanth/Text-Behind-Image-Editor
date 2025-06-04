@@ -24,8 +24,8 @@ ctx.onmessage = async (e) => {
             });
           }
         },
-        // Optimize for mobile devices
-        model: 'medium', // Use medium model for better performance
+        // Use isnet model for better performance
+        model: 'isnet', // Default model that provides good balance of speed and quality
         output: {
           format: 'image/png', // Use PNG to preserve transparency
           quality: 1.0 // Use maximum quality for better results
