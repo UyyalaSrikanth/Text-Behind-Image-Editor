@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Text Behind Image Editor - 100% Free | No Login Required",
-  description: "Instantly add text behind subjects in your images using AI. Completely free with no signups or watermarks.",
+  title: "AI Text Behind Image Editor - Edit Images with AI Easily",
+  description: "An easy-to-use online tool that uses AI to place custom text behind images for creative designs.",
 };
 
 export default function RootLayout({
@@ -24,6 +24,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="An easy-to-use online tool that uses AI to place custom text behind images for creative designs." />
+        <title>AI Text Behind Image Editor - Edit Images with AI Easily</title>
+        <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

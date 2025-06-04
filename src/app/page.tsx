@@ -114,9 +114,9 @@ export default function Home() {
   };
 
   return (
-    <main className={`min-h-screen ${darkMode ? 'bg-black text-white' : 'bg-white text-black'} py-10 px-4 transition-colors`}>
+    <main className={`min-h-screen ${darkMode ? 'bg-black text-white' : 'bg-white text-black'} py-4 px-4 transition-colors`}>
       {/* Toggle Switch */}
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-2">
         <label className="relative inline-flex items-center cursor-pointer">
           <input
             type="checkbox"
@@ -129,14 +129,14 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative py-20 px-4 md:px-8">
+      <section className="relative py-12 px-4 md:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Create Stunning Text Behind Image Effects
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+              AI Text Behind Image Editor
             </h1>
             <p className="text-xl text-gray-400 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-              Transform your photos with our easy-to-use editor. Add text behind your subjects and create eye-catching designs in seconds.
+              Create stunning images by placing text behind your photos using our powerful AI-powered editor. Fast, free, and easy to use.
             </p>
             <Link
               href="/editor"
