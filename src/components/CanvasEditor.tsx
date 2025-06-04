@@ -308,6 +308,44 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
     },
   }));
 
+  // Add this utility function before the component
+  const constrainTextPosition = (
+    xPercent: number,
+    yPercent: number,
+    element: TextElement,
+    drawWidth: number,
+    drawHeight: number,
+    ctx: CanvasRenderingContext2D
+  ) => {
+    // Calculate text dimensions
+    const baseFontSizeReference = 100;
+    const scaledFontSize = (element.fontSize / baseFontSizeReference) * drawHeight * 0.2;
+    ctx.font = `${element.isBold ? 'bold' : 'normal'} ${scaledFontSize}px ${element.fontFamily}, sans-serif`;
+    const metrics = ctx.measureText(element.text);
+
+    // Calculate text bounds considering rotation
+    const halfTextWidth = metrics.width / 2;
+    const halfTextHeight = scaledFontSize / 2;
+    const cos = Math.cos(element.rotation * Math.PI / 180);
+    const sin = Math.sin(element.rotation * Math.PI / 180);
+
+    // Calculate rotated text dimensions
+    const rotatedWidth = Math.abs(halfTextWidth * cos) + Math.abs(halfTextHeight * sin);
+    const rotatedHeight = Math.abs(halfTextWidth * sin) + Math.abs(halfTextHeight * cos);
+
+    // Calculate bounds in percentage
+    const minX = (rotatedWidth / drawWidth) * 50;
+    const maxX = 100 - minX;
+    const minY = (rotatedHeight / drawHeight) * 50;
+    const maxY = 100 - minY;
+
+    // Clamp positions
+    return {
+      xPosition: Math.max(minX, Math.min(maxX, xPercent)),
+      yPosition: Math.max(minY, Math.min(maxY, yPercent))
+    };
+  };
+
   // Mouse down handler - initiate drag or selection
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -417,8 +455,9 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
     }
   };
 
+  // Update the handleMouseMove function
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDraggingRef.current || !selectedElementRef.current || !originalImage) return; // Ensure originalImage is loaded
+    if (!isDraggingRef.current || !selectedElementRef.current || !originalImage) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -430,7 +469,7 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
     const dx = x - dragStartRef.current.x;
     const dy = y - dragStartRef.current.y;
 
-    // Calculate image draw area on the canvas
+    // Calculate image draw area
     const imgRatio = originalImage.width / originalImage.height;
     const canvasRatio = canvas.width / canvas.height;
     
@@ -447,42 +486,97 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
     const offsetX = (canvas.width - drawWidth) / 2;
     const offsetY = (canvas.height - drawHeight) / 2;
 
-    // Find the element being dragged from the current elements ref
+    // Find the element being dragged
     const elementToUpdateIndex = currentTextElementsRef.current.findIndex(el => el.id === selectedElementRef.current?.id);
     if (elementToUpdateIndex === -1) return;
 
-    // Get the current element's position relative to the image draw area
     const currentElement = currentTextElementsRef.current[elementToUpdateIndex];
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Get current position
     const currentPixelX = offsetX + (currentElement.xPosition / 100) * drawWidth;
     const currentPixelY = offsetY + (currentElement.yPosition / 100) * drawHeight;
 
-    // Calculate the new pixel position on the canvas
+    // Calculate new position
     const newPixelX = currentPixelX + dx;
     const newPixelY = currentPixelY + dy;
 
-    // Convert new pixel position back to percentage relative to image draw area
+    // Convert to percentages
     const newXPercent = ((newPixelX - offsetX) / drawWidth) * 100;
     const newYPercent = ((newPixelY - offsetY) / drawHeight) * 100;
 
-    // Create a mutable copy to update in the ref
+    // Constrain position
+    const constrainedPosition = constrainTextPosition(
+      newXPercent,
+      newYPercent,
+      currentElement,
+      drawWidth,
+      drawHeight,
+      ctx
+    );
+
+    // Update element position
     const updatedElements = [...currentTextElementsRef.current];
     const elementToUpdate = { ...updatedElements[elementToUpdateIndex] };
-
-    // Clamp positions to stay within bounds (0-100 percent) relative to image draw area
-    elementToUpdate.xPosition = Math.max(0, Math.min(100, newXPercent));
-    elementToUpdate.yPosition = Math.max(0, Math.min(100, newYPercent));
-
+    elementToUpdate.xPosition = constrainedPosition.xPosition;
+    elementToUpdate.yPosition = constrainedPosition.yPosition;
     updatedElements[elementToUpdateIndex] = elementToUpdate;
 
-    // Update the ref directly for immediate visual feedback
+    // Update ref and redraw
     currentTextElementsRef.current = updatedElements;
-
-    // Request animation frame to redraw
     requestAnimationFrame(drawCanvas);
 
-    // Update drag start for the next move event
+    // Update drag start for next move
     dragStartRef.current = { x, y };
-  }, [originalImage, drawCanvas]); // Added originalImage to dependencies
+  }, [originalImage, drawCanvas]);
+
+  // Add this effect to handle X/Y axis updates
+  useEffect(() => {
+    if (!canvasRef.current || !originalImage) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Calculate image draw area
+    const imgRatio = originalImage.width / originalImage.height;
+    const canvasRatio = canvas.width / canvas.height;
+    
+    let drawWidth, drawHeight;
+    
+    if (imgRatio > canvasRatio) {
+      drawWidth = canvas.width;
+      drawHeight = canvas.width / imgRatio;
+    } else {
+      drawHeight = canvas.height;
+      drawWidth = canvas.height * imgRatio;
+    }
+
+    // Update text positions with constraints
+    const updatedElements = textElements.map(element => {
+      const constrainedPosition = constrainTextPosition(
+        element.xPosition,
+        element.yPosition,
+        element,
+        drawWidth,
+        drawHeight,
+        ctx
+      );
+
+      return {
+        ...element,
+        xPosition: constrainedPosition.xPosition,
+        yPosition: constrainedPosition.yPosition
+      };
+    });
+
+    // Only update if positions actually changed
+    if (JSON.stringify(updatedElements) !== JSON.stringify(textElements)) {
+      currentTextElementsRef.current = updatedElements;
+      requestAnimationFrame(drawCanvas);
+    }
+  }, [textElements, originalImage, drawCanvas]);
 
   
   const handleMouseUp = useCallback(() => {

@@ -4,6 +4,14 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      [elemName: string]: any;
+    }
+  }
+}
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

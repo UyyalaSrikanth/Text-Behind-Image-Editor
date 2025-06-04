@@ -127,21 +127,47 @@ export default function ControlPanel({
   useEffect(() => {
     // Load fonts on demand when selected
     const loadFont = (fontFamily: string) => {
+      // Skip if font is already loaded
+      if (document.fonts.check(`1em "${fontFamily}"`)) {
+        return;
+      }
+
+      // Create font loader for the selected font
+      const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily)}:wght@400;700&display=swap`;
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily)}:wght@400;700&display=swap`;
+      link.href = fontUrl;
+
+      const handleLoad = () => {
+        // Force a redraw of the canvas when font is loaded
+        if (mainRef.current) {
+          const event = new Event('fontloaded');
+          mainRef.current.dispatchEvent(event);
+        }
+      };
+
+      const handleError = (error: ErrorEvent) => {
+        console.error(`Failed to load font ${fontFamily}:`, error);
+        // Fallback to system font if loading fails
+        onFontFamilyChange('Arial');
+      };
+
+      link.addEventListener('load', handleLoad);
+      link.addEventListener('error', handleError);
       document.head.appendChild(link);
+
+      return () => {
+        link.removeEventListener('load', handleLoad);
+        link.removeEventListener('error', handleError);
+        document.head.removeChild(link);
+      };
     };
 
     // Load current font if not already loaded
-    if (fontFamily && !document.fonts.check(`1em "${fontFamily}"`)) {
+    if (fontFamily) {
       loadFont(fontFamily);
     }
-
-    return () => {
-      // Cleanup is handled automatically by the browser
-    };
-  }, [fontFamily]); // Only reload when font changes
+  }, [fontFamily, onFontFamilyChange, mainRef]);
 
   const toggleCategory = (category: string) => {
     setExpandedCategory(expandedCategory === category ? null : category);
