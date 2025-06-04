@@ -5,7 +5,7 @@ import ControlPanel from '@/components/ControlPanel';
 import ImageUploader from '@/components/ImageUploader';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface TextElement {
   id: string;
@@ -65,8 +65,8 @@ const demoImages = [
     alt: 'Example 3', 
     width: 500, 
     height: 600,
-    priority: true,
-    loading: 'eager' as const
+    priority: false,
+    loading: 'lazy' as const
   },
   { 
     id: 4, 
@@ -120,7 +120,104 @@ export default function Editor() {
   const mainRef = useRef<HTMLElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentDemoIndex, setCurrentDemoIndex] = useState(0);
+  const [processingProgress, setProcessingProgress] = useState(0);
+  const processingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const visibilityChangeRef = useRef<boolean>(true);
   
+  // Handle visibility change
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      visibilityChangeRef.current = document.visibilityState === 'visible';
+      if (visibilityChangeRef.current && isProcessing) {
+        // Resume processing if it was interrupted
+        continueProcessing();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isProcessing]);
+
+  // Simulate processing with progress
+  const simulateProcessing = useCallback((onComplete: () => void) => {
+    let progress = 0;
+    const interval = setInterval(() => {
+      if (!visibilityChangeRef.current) {
+        clearInterval(interval);
+        return;
+      }
+
+      progress += 5;
+      setProcessingProgress(progress);
+      
+      if (progress >= 100) {
+        clearInterval(interval);
+        onComplete();
+      }
+    }, 100);
+  }, []);
+
+  const continueProcessing = useCallback(() => {
+    if (isProcessing && processingProgress < 100) {
+      simulateProcessing(() => {
+        setIsProcessing(false);
+        setProcessingProgress(0);
+      });
+    }
+  }, [isProcessing, processingProgress, simulateProcessing]);
+
+  const handleImageProcessed = useCallback((processed: string, original: string) => {
+    setIsProcessing(true);
+    setProcessingProgress(0);
+    
+    // Start processing simulation
+    simulateProcessing(() => {
+      setImageUrl(processed);
+      setOriginalImageUrl(original);
+      const defaultTextElement: TextElement = {
+        id: '1',
+        text: 'Edit',
+        fontFamily: 'Impact',
+        textColor: '#FFFFFF',
+        xPosition: 50,
+        yPosition: 50,
+        fontSize: 120,
+        isBold: true,
+        rotation: 0,
+      };
+      setTextElements([defaultTextElement]);
+      setSelectedTextId('1');
+      setIsProcessing(false);
+    });
+  }, [simulateProcessing]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (processingTimeoutRef.current) {
+        clearTimeout(processingTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Add image preloading for priority images
+  useEffect(() => {
+    const preloadImages = () => {
+      demoImages
+        .filter(img => img.priority)
+        .forEach(img => {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = img.src;
+          document.head.appendChild(link);
+        });
+    };
+    preloadImages();
+  }, []);
+
   // Effect to rotate demo images while processing
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -133,24 +230,6 @@ export default function Editor() {
       if (interval) clearInterval(interval);
     };
   }, [isProcessing]);
-
-  const handleImageProcessed = (processed: string, original: string) => {
-    setImageUrl(processed);
-    setOriginalImageUrl(original);
-    const defaultTextElement: TextElement = {
-      id: '1',
-      text: 'Edit',
-      fontFamily: 'Impact',
-      textColor: '#FFFFFF',
-      xPosition: 50,
-      yPosition: 50,
-      fontSize: 120,
-      isBold: true,
-      rotation: 0,
-    };
-    setTextElements([defaultTextElement]);
-    setSelectedTextId('1');
-  };
 
   const updateTextElement = (updates: Partial<TextElement>) => {
     setTextElements(prev =>
@@ -269,6 +348,19 @@ export default function Editor() {
         {!imageUrl ? (
           <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
             <ImageUploader onImageProcessed={handleImageProcessed} />
+            {isProcessing && (
+              <div className="mt-4">
+                <div className="w-full bg-gray-700 rounded-full h-2.5">
+                  <div 
+                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                    style={{ width: `${processingProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-center mt-2 text-gray-300">
+                  Processing image... {processingProgress}%
+                </p>
+              </div>
+            )}
             <div className="mt-8">
               <h3 className="text-xl font-semibold text-white mb-4">Example Results</h3>
               <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">

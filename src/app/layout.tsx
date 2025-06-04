@@ -1,4 +1,4 @@
-import { ALL_FONTS } from "@/constants/fonts";
+import FontLoader from "@/components/FontLoader";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
@@ -16,8 +16,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Create the Google Fonts URL with all fonts
-  const googleFontsUrl = `https://fonts.googleapis.com/css2?${ALL_FONTS.map(font => 
+  // Only load essential fonts initially
+  const essentialFonts = ['Inter', 'Roboto', 'Arial'];
+  const googleFontsUrl = `https://fonts.googleapis.com/css2?${essentialFonts.map(font => 
     `family=${encodeURIComponent(font)}:wght@400;700`
   ).join('&')}&display=swap`;
 
@@ -38,6 +39,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 text-white antialiased flex flex-col min-h-screen`}>
+        {/* Load additional fonts */}
+        <FontLoader fontUrl="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" />
+        
         {/* Animated gradient background */}
         <div className="fixed inset-0 -z-50 overflow-hidden animate-gradient">
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10"></div>
