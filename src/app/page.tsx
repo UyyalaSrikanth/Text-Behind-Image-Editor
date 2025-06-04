@@ -68,6 +68,33 @@ const showcaseImages = [
     priority: false,
     loading: 'lazy' as const
   },
+  { 
+    id: 8, 
+    src: '/img8.png', 
+    alt: 'Image 8', 
+    width: 500, 
+    height: 600,
+    priority: false,
+    loading: 'lazy' as const
+  },
+  { 
+    id: 9, 
+    src: '/img9.png', 
+    alt: 'Image 9', 
+    width: 500, 
+    height: 600,
+    priority: false,
+    loading: 'lazy' as const
+  },
+  { 
+    id: 10, 
+    src: '/img10.png', 
+    alt: 'Image 10', 
+    width: 500, 
+    height: 600,
+    priority: false,
+    loading: 'lazy' as const
+  },
 ];
 
 export default function Home() {
