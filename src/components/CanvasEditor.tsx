@@ -12,6 +12,15 @@ interface TextElement {
   fontSize: number; // Base font size (e.g., pixels relative to some reference)
   isBold: boolean;
   rotation: number; // Degrees
+  opacity: number;
+  is3D: boolean;
+  depth: number;
+  perspective: number;
+  shadowColor: string;
+  shadowEnabled: boolean;
+  shadowBlur: number;
+  shadowOffsetX: number;
+  shadowOffsetY: number;
 }
 
 interface CanvasEditorProps {
@@ -112,13 +121,12 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
       ctx.save();
       
       // Set text properties
-      // Scale font size based on the ratio of the element.fontSize (0-300) to a reference value (e.g., 100 or 200) relative to the image draw height
-      // Let's assume element.fontSize 100 corresponds to a reasonable base size relative to the image height
-      const baseFontSizeReference = 100; // A reference value for element.fontSize
-      const scaledFontSize = (element.fontSize / baseFontSizeReference) * drawHeight * 0.2; // Adjusted scaling factor (0.2 is a guess, might need tweaking)
+      const baseFontSizeReference = 100;
+      const scaledFontSize = (element.fontSize / baseFontSizeReference) * drawHeight * 0.2;
 
       ctx.font = `${element.isBold ? 'bold' : 'normal'} ${scaledFontSize}px ${element.fontFamily}, sans-serif`;
       ctx.fillStyle = element.textColor;
+      ctx.globalAlpha = element.opacity;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
@@ -129,14 +137,49 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
       // Apply text rotation
       ctx.translate(x, y);
       ctx.rotate((element.rotation * Math.PI) / 180);
+
+      // Apply 3D effect if enabled
+      if (element.is3D) {
+        const depth = element.depth;
+        const perspective = element.perspective;
+        const layers = 20; // Increased number of layers for smoother effect
+        const layerDepth = depth / layers;
+        
+        // Calculate perspective scaling factor
+        const perspectiveScale = Math.cos((perspective * Math.PI) / 180);
+        
+        // Draw multiple layers to create 3D effect
+        for (let i = layers; i > 0; i--) {
+          ctx.save();
+          const currentDepth = i * layerDepth;
+          const opacity = 0.1 + (0.9 * (i / layers)); // Gradually increase opacity for front layers
+          
+          // Apply perspective transformation
+          const scale = 1 - (currentDepth / depth) * (1 - perspectiveScale);
+          ctx.translate(currentDepth, currentDepth);
+          ctx.scale(scale, scale);
+          
+          ctx.fillStyle = `rgba(0, 0, 0, ${opacity * 0.3})`;
+          ctx.fillText(element.text, 0, 0);
+          ctx.restore();
+        }
+      }
+
+      // Apply shadow if enabled
+      if (element.shadowEnabled) {
+        ctx.shadowColor = element.shadowColor;
+        ctx.shadowBlur = element.shadowBlur;
+        ctx.shadowOffsetX = element.shadowOffsetX;
+        ctx.shadowOffsetY = element.shadowOffsetY;
+      }
       
-      // Draw text
+      // Draw the main text on top
+      ctx.fillStyle = element.textColor;
       ctx.fillText(element.text, 0, 0);
 
       // Draw selection indicator if selected
       if (isSelected) {
         const metrics = ctx.measureText(element.text);
-        // Adjust rectangle to be around the text
         const rectX = -metrics.width / 2;
         const rectY = -scaledFontSize / 2;
         const rectWidth = metrics.width;
@@ -269,16 +312,52 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({
         ctx.rotate(element.rotation * Math.PI / 180);
 
         // Scale font size using the same logic as the editor canvas drawing
-        const baseFontSizeReference = 100; // Must match the value used in drawCanvas
-        const scaledFontSize = (element.fontSize / baseFontSizeReference) * drawHeight * 0.2; // Must use the same scaling factor
+        const baseFontSizeReference = 100;
+        const scaledFontSize = (element.fontSize / baseFontSizeReference) * drawHeight * 0.2;
 
         const font = `${element.isBold ? 'bold ' : ''}${scaledFontSize}px ${element.fontFamily}, sans-serif`;
         ctx.font = font;
 
         ctx.fillStyle = element.textColor;
+        ctx.globalAlpha = element.opacity;
 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
+
+        // Apply 3D effect if enabled
+        if (element.is3D) {
+          const depth = element.depth;
+          const perspective = element.perspective;
+          const layers = 20; // Increased number of layers for smoother effect
+          const layerDepth = depth / layers;
+          
+          // Calculate perspective scaling factor
+          const perspectiveScale = Math.cos((perspective * Math.PI) / 180);
+          
+          // Draw multiple layers to create 3D effect
+          for (let i = layers; i > 0; i--) {
+            ctx.save();
+            const currentDepth = i * layerDepth;
+            const opacity = 0.1 + (0.9 * (i / layers)); // Gradually increase opacity for front layers
+            
+            // Apply perspective transformation
+            const scale = 1 - (currentDepth / depth) * (1 - perspectiveScale);
+            ctx.translate(currentDepth, currentDepth);
+            ctx.scale(scale, scale);
+            
+            ctx.fillStyle = `rgba(0, 0, 0, ${opacity * 0.3})`;
+            ctx.fillText(element.text, 0, 0);
+            ctx.restore();
+          }
+        }
+
+        // Apply shadow if enabled
+        if (element.shadowEnabled) {
+          ctx.shadowColor = element.shadowColor;
+          ctx.shadowBlur = element.shadowBlur;
+          ctx.shadowOffsetX = element.shadowOffsetX;
+          ctx.shadowOffsetY = element.shadowOffsetY;
+        }
 
         ctx.fillText(element.text, 0, 0);
 
